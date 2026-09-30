@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditLogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
@@ -18,6 +19,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/order/{id}/edit', [OrderController::class, 'edit'])->name('orders.edit');
     Route::put('/order/{id}/update', [OrderController::class, 'update'])->name('orders.update');
     Route::delete('/order/{id}/delete', [OrderController::class, 'delete'])->name('orders.destroy');
+    Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit_log.index');
 
 });
 

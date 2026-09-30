@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Http\Repositories\AuditLog\AuditLogRepository;
 use App\Models\AuditLog;
 use App\Models\Order;
 use App\Models\User;
@@ -9,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderObserver
 {
+
+    public function __construct(protected AuditLogRepository $auditLogRepository) {}
+
     /**
      * Handle the Order "created" event.
      */
@@ -26,10 +30,12 @@ class OrderObserver
                 "name" => $user->name,
                 "amount" => $order->amount,
                 "status" => $order->status
-            ]
+            ],
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
         ];
 
-        AuditLog::create($data);
+        $this->auditLogRepository->create($data);
     }
 
     /**
@@ -57,10 +63,12 @@ class OrderObserver
             'auditable_type' => Order::class,
             'auditable_id' => $order->id,
             'before' => $before,
-            'after' => $after
+            'after' => $after,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
         ];
 
-        AuditLog::create($data);
+        $this->auditLogRepository->create($data);
     }
 
     /**
@@ -71,7 +79,7 @@ class OrderObserver
         $user = Auth::user();
         $data = [
             'user_id' => $user->id,
-            'event' => 'order.update',
+            'event' => 'order.deleted',
             'auditable_type' => Order::class,
             'auditable_id' => $order->id,
             'after' => null,
@@ -79,9 +87,11 @@ class OrderObserver
                 "name" => $user->name,
                 "amount" => $order->amount,
                 "status" => $order->status
-            ]
+            ],
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
         ];
 
-        AuditLog::create($data);
+        $this->auditLogRepository->create($data);
     }
 }

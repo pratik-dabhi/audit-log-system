@@ -30,8 +30,13 @@ class User extends Authenticatable
         ];
     }
 
-    protected function orders()
+    public function orders()
     {
         return $this->hasMany(Order::class, 'user_id', 'id');
+    }
+
+    public function auditLogs()
+    {
+        return $this->hasMany(AuditLog::class, 'user_id', 'id');
     }
 }

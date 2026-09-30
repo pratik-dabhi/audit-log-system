@@ -16,6 +16,10 @@
             </span>
         </div>
 
+        <a href="{{ route('audit_log.index') }}" class="btn green">
+            Audit Logs
+        </a>
+
         <form
             action="{{ route('logout') }}"
             method="POST"
@@ -24,7 +28,7 @@
 
             <button
                 type="submit"
-                class="logout-btn"
+                class="btn danger"
             >
                 Logout
             </button>
@@ -81,24 +85,32 @@
         font-weight: 600;
     }
 
-    .logout-btn {
+    .btn {
         padding: 8px 14px;
-
-        border: 1px solid #dc2626;
         border-radius: 6px;
-
         background: #ffffff;
-        color: #dc2626;
-
         font-size: 14px;
         font-weight: 500;
-
         cursor: pointer;
         transition: 0.2s;
     }
 
-    .logout-btn:hover {
+    .green{
+        border: 1px solid #008000;
+        color: #008000;
+    }
+
+    .danger{
+        border: 1px solid #dc2626;
+        color: #dc2626;
+    }
+
+    .danger:hover {
         background: #dc2626;
+        color: #ffffff;
+    }
+    .green:hover {
+        background: #014901;
         color: #ffffff;
     }
 </style>
