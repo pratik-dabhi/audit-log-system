@@ -16,7 +16,7 @@
             </span>
         </div>
 
-        <a href="{{ route('audit_log.index') }}" class="btn green">
+        <a href="{{ route('audit_log.index') }}" class="outline-btn green">
             Audit Logs
         </a>
 
@@ -28,7 +28,7 @@
 
             <button
                 type="submit"
-                class="btn danger"
+                class="outline-btn danger"
             >
                 Logout
             </button>
@@ -85,7 +85,7 @@
         font-weight: 600;
     }
 
-    .btn {
+    .outline-btn {
         padding: 8px 14px;
         border-radius: 6px;
         background: #ffffff;
@@ -98,6 +98,7 @@
     .green{
         border: 1px solid #008000;
         color: #008000;
+        text-decoration: none;
     }
 
     .danger{
