@@ -1,7 +1,8 @@
+
 <header class="app-header">
 
     <div class="header-left">
-        <a href="{{ route('orders.index') }}" class="logo">
+        <a href="/orders" class="logo">
             Order Management
         </a>
     </div>
@@ -16,7 +17,7 @@
             </span>
         </div>
 
-        <a href="{{ route('audit_log.index') }}" class="outline-btn green">
+        <a href="{{ route('audit-logs.index') }}" class="outline-btn green">
             Audit Logs
         </a>
 

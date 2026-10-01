@@ -6,13 +6,14 @@ use App\Observers\OrderObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-#[Fillable(['status', 'amount', 'user_id'])]
+#[Fillable(['customer_name', 'amount', 'status'])]
 #[ObservedBy([OrderObserver::class])]
 class Order extends Model
 {
-    protected function user()
+    public function auditLogs(): MorphMany
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->morphMany(AuditLog::class, 'auditable');
     }
 }

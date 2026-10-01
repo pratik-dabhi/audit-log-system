@@ -61,7 +61,7 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            return redirect()->intended('/order');
+            return redirect()->intended('/orders');
         }
 
         return back()->withErrors([

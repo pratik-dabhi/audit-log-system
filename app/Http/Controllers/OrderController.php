@@ -2,84 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Repositories\Order\OrderRepository;
+use App\Models\Order;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    public function __construct(protected OrderRepository $orderRepository){}
-
     public function index()
     {
-        $orders = $this->orderRepository->get();
-
-        return view('order.index', compact('orders'));
-    }
-
-    public function create()
-    {
-        return view('order.create');
+        return response()->json(Order::latest()->paginate(15));
     }
 
     public function store(Request $request)
     {
-        DB::beginTransaction();
-        try {
-            $validated = $request->validate([
-                'amount' => ['required'],
-                'status' => ['required', 'string'],
-            ]);
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'amount' => 'required|numeric',
+            'status' => 'nullable|string|in:pending,paid,cancelled',
+        ]);
 
-            $validated['user_id'] = Auth::user()->id;
-            $this->orderRepository->create($validated);
-            DB::commit();
-            return redirect()->intended('/order');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
+        $order = DB::transaction(function () use ($validated) {
+            return Order::create($validated);
+        });
+
+        return response()->json($order, Response::HTTP_CREATED);
     }
 
-    public function edit(int $id)
+    public function show(Order $order)
     {
-        $order = $this->orderRepository->getById($id);
-        return view('order.edit' , compact('order'));
+        return response()->json($order);
     }
 
-    public function update(int $id, Request $request)
+    public function update(Request $request, Order $order)
     {
-        DB::beginTransaction();
-        try {
-            $validated = $request->validate([
-                'amount' => ['required'],
-                'status' => ['required', 'string'],
-            ]);
+        $validated = $request->validate([
+            'customer_name' => 'sometimes|required|string|max:255',
+            'amount' => 'sometimes|required|numeric',
+            'status' => 'sometimes|required|string|in:pending,paid,cancelled',
+        ]);
 
-            $validated['user_id'] = Auth::user()->id;
-            $this->orderRepository->update($id, $validated);
+        DB::transaction(function () use ($order, $validated) {
+            $order->update($validated);
+        });
 
-            DB::commit();
-            return redirect()->intended('/order');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
+        return response()->json($order);
     }
 
-    public function delete(int $id)
+    public function destroy(Order $order)
     {
-        DB::beginTransaction();
-        try {
-            $this->orderRepository->delete($id);
-            DB::commit();
-            return redirect()->intended('/order');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
+        DB::transaction(function () use ($order) {
+            $order->delete();
+        });
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
-
-
 }
